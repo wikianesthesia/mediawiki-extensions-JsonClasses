@@ -1,0 +1,10 @@
+{
+  "@metadata": {
+    "authors": [
+      "Chris Rishel"
+    ]
+  },
+  "jsonschemaclasses": "Json Schema Classes",
+  "jsonschemaclasses-extensionname": "JsonSchemaClasses",
+  "jsonschemaclasses-desc": "Provides support for modular classes which load data from a JSON schema"
+}
