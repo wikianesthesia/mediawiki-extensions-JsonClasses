@@ -2,87 +2,134 @@
 
 namespace MediaWiki\Extension\JsonSchemaClasses;
 
+use MediaWiki\MediaWikiServices;
+
 class JsonSchemaClassManager {
+
     /**
-     * Definitions describe the implementation of a class (typically a subclass of a class described in $schema).
-     * @var array
+     * @var AbstractJsonSchemaClass[]
      */
-    protected static $definition = [];
+    protected static $classInstances = [];
 
     /**
      * Schema describe a prototype of a class (typically an abstract class).
-     * @var array
+     * @var AbstractSchema[]
      */
     protected static $schema = [];
 
-    protected static $text = [];
+    /**
+     * @var string[][]
+     */
+    protected static $schemaClassIds = [];
 
-    public function getClass( string $class, bool $includeNamespace = true ): string {
-        return $includeNamespace ?
-            $class :
-            substr( strrchr( $class, '\\' ), 1 );
+    public function getClassInstance( string $class ): ?AbstractJsonSchemaClass {
+        return static::$classInstances[ $class ] ?? null;
     }
 
-    public function getDefinition( string $class ): ?array {
-        return static::$definition[ $class ] ?? null;
+    public function getClassInstanceForSchema( string $schemaClass, string $classId ): ?AbstractJsonSchemaClass {
+        if( !isset( static::$schemaClassIds[ $schemaClass ] )
+            || !isset( static::$schemaClassIds[ $schemaClass ][ $classId ] ) ) {
+            return null;
+        }
+
+        return $this->getClassInstance( static::$schemaClassIds[ $schemaClass ][ $classId ] );
     }
 
-    public function getSchema( string $class ): ?array {
-        return static::$schema[ $class ] ?? null;
+
+    public function getClassInstancesForSchema( string $schemaClass ): array {
+        $classInstances = [];
+
+        if( isset( static::$schemaClassIds[ $schemaClass ] ) ) {
+            $classInstances = array_map( function( string $classId ) {
+                return static::getClassInstance( $classId );
+            }, static::$schemaClassIds[ $schemaClass ] );
+        }
+
+        return $classInstances;
+    }
+
+    public function getSchema( string $schemaClass ): ?AbstractSchema {
+        return static::$schema[ $schemaClass ] ?? null;
+    }
+
+    public function isClassRegistered( string $class ): bool {
+        return isset( static::$classInstances[ $class ] );
+    }
+
+    public function isSchemaRegistered( string $baseClass ): bool {
+        return isset( static::$schema[ $baseClass ] );
     }
 
     /**
-     * @param string $class
-     * @param string $var
-     * @return string|null
+     * @param class-string<AbstractSchema> $schemaClass
+     * @return bool
      */
-    public function getText( string $class, string $textProperty ): ?string {
-        return static::$text[ $class ][ $textProperty ] ?? null;
-    }
-
-    public function isDefinitionRegistered( string $class ): bool {
-        return isset( static::$definition[ $class ] );
-    }
-
-    public function isSchemaRegistered( string $class ): bool {
-        return isset( static::$schema[ $class ] );
-    }
-
-    public function registerDefinition( string $class, array $definition ): bool {
-        static::$definition[ $class ] = $definition;
-        static::$text[ $class ] = [];
-
-        return true;
-    }
-
-    public function registerSchema( string $class, string $file ): bool {
-        if( isset( static::$schema[ $class ] ) ) {
+    public function registerSchema( string $schemaClass ): bool {
+        if( isset( static::$schema[ $schemaClass ] ) ) {
             // TODO throw/log error?
             return false;
         }
 
-        $json = file_get_contents( $file );
+        $schema = new $schemaClass();
 
-        if( $json === false ) {
-            // TODO log error schema file not found or not accessible
+        /**
+         * @var ClassRegistry
+         */
+        $classRegistryClass = $schema->getClassRegistryClass();
 
-            return false;
+        if( !class_exists( $classRegistryClass ) ) {
+            // TODO error handling
         }
 
-        $schema = json_decode( $json, true );
+        static::$schema[ $schemaClass ] = $schema;
+        static::$schemaClassIds[ $schemaClass ] = [];
 
-        if( !is_array( $schema ) ) {
-            // TODO log error json file not valid
+        $classRegistry = new $classRegistryClass( $schema->getClassDefinitionFileName() );
 
-            return false;
+        static::$schema[ $schemaClass ]->registerClasses( $classRegistry );
+
+        foreach( $classRegistry->getRegisteredClassDefinitionFiles() as $classDefinitionFile ) {
+            $this->loadClass( $schemaClass, $classDefinitionFile );
         }
-
-        static::$schema[ $class ] = $schema;
 
         return true;
     }
 
-    public function setText( string $class, string $textProperty, string $value ) {
-        static::$text[ $class ][ $textProperty ] = $value;
+    protected function loadClass( string $schemaClass, string $classDefinitionFile ): bool {
+        $classDefinition = JsonHelper::decodeJsonFile( $classDefinitionFile );
+
+        if( !isset( $classDefinition[ 'class' ] ) ) {
+            // TODO error handling
+
+            return false;
+        }
+
+        $shortClass = substr( strrchr( $classDefinition[ 'class' ], '\\' ), 1 );
+
+        if( !isset( $classDefinition[ 'id' ] ) ) {
+            $classDefinition[ 'id' ] = $shortClass;
+        }
+
+        // Import the class's php file
+        if( !isset( $classDefinition[ 'classfile' ] ) ) {
+            $classDefinition[ 'classfile' ] = $shortClass . '.php';
+        }
+
+        // Convert classfile from relative to absolute path
+        $classFile = dirname( $classDefinitionFile ) . '/' . $classDefinition[ 'classfile' ];
+
+        require_once( $classFile );
+
+        /**
+         * @var AbstractJsonSchemaClass
+         */
+        $classInstance = new $classDefinition[ 'class' ]( $classDefinition );
+
+        static::$classInstances[ $classDefinition[ 'class' ] ] = $classInstance;
+
+        static::$schemaClassIds[ $schemaClass ][ $classInstance->getId() ] = $classDefinition[ 'class' ];
+
+
+        return true;
     }
 }

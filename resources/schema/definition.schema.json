@@ -4,6 +4,19 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "id": {
+      "type": "string",
+      "description": "The id of the class. This must be unique for the schema class. If not specified, will default to the class name (without the namespace)."
+    },
+    "class": {
+      "type": "string",
+      "description": "The full class name (including namespace)",
+      "required": true
+    },
+    "classfile": {
+      "type": "string",
+      "description": "The relative path to the class php file. If not specified, will default to the class name (without the namespace) in the same directory as the json definition."
+    },
     "author": {
       "type": [
         "string",
