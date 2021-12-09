@@ -13,15 +13,31 @@ abstract class AbstractJsonSchemaClass {
     protected $definition = [];
     protected $text = [];
 
+
+
+    /**
+     * @param array $definition
+     */
     public function __construct( array $definition ) {
         $this->processDefinition( $definition );
         $this->setHooks();
     }
 
+
+
+    /**
+     * @param string $var
+     * @return mixed|null
+     */
     public function getConfig( string $var = '' ) {
         return $this->config[ $var ] ?? null;
     }
 
+
+
+    /**
+     * @return string
+     */
     public function getDescription(): string {
         return $this->getText(
             'description',
@@ -29,6 +45,17 @@ abstract class AbstractJsonSchemaClass {
             [ $this->getMsgKeyPrefix() . '-desc' ]
         );
     }
+
+
+
+    /**
+     * @return mixed
+     */
+    public function getId() {
+        return $this->getDefinition( 'id' );
+    }
+
+
 
     /**
      * @return string
@@ -44,6 +71,8 @@ abstract class AbstractJsonSchemaClass {
         return $this->localDirectory;
     }
 
+
+
     /**
      * @return string
      */
@@ -55,6 +84,11 @@ abstract class AbstractJsonSchemaClass {
         );
     }
 
+
+
+    /**
+     * @return string
+     */
     public function getName(): string {
         return $this->getText(
             'name',
@@ -63,6 +97,8 @@ abstract class AbstractJsonSchemaClass {
             $this->getClassString( static::class, false )
         );
     }
+
+
 
     /**
      * @return string
@@ -75,6 +111,15 @@ abstract class AbstractJsonSchemaClass {
         return $this->remoteDirectory;
     }
 
+
+
+    /**
+     * @param string $textProperty
+     * @param string $messageProperty
+     * @param array $extraMessageKeys
+     * @param string $defaultValue
+     * @return string
+     */
     public function getText( string $textProperty = '', string $messageProperty = '', array $extraMessageKeys = [], string $defaultValue = '' ): string {
         if( !isset( $this->text[ $textProperty ] ) ) {
             $text = '';
@@ -113,16 +158,35 @@ abstract class AbstractJsonSchemaClass {
         return $this->text[ $textProperty ];
     }
 
+
+
+    /**
+     * @param string $var
+     * @param $value
+     */
     public function setConfig( string $var, $value ) {
         $this->config[ $var ] = $value;
     }
 
+
+
+    /**
+     * @param string $class
+     * @param bool $includeNamespace
+     * @return string
+     */
     protected function getClassString( string $class, bool $includeNamespace = true ): string {
         return $includeNamespace ?
             $class :
             substr( strrchr( $class, '\\' ), 1 );
     }
 
+
+
+    /**
+     * @param string $property
+     * @return array|mixed|null
+     */
     protected function getDefinition( string $property = '' ) {
         if( $property ) {
             return $this->definition[ $property ] ?? null;
@@ -131,6 +195,8 @@ abstract class AbstractJsonSchemaClass {
         return $this->definition;
     }
 
+
+
     /**
      * @return JsonSchemaClassManager
      */
@@ -138,20 +204,41 @@ abstract class AbstractJsonSchemaClass {
         return MediaWikiServices::getInstance()->get( 'JsonSchemaClassManager' );
     }
 
+
+
     /**
-     * @param bool $includeNamespace
      * @return string
      */
     abstract protected function getSchemaClass(): string;
 
+
+
+    /**
+     * @return AbstractSchema|null
+     */
     protected function getSchema(): ?AbstractSchema {
         return $this->getJsonSchemaClassManager()->getSchema( $this->getSchemaClass() );
     }
 
+
+
+    /**
+     * @param array $definition
+     */
     protected function postprocessDefinition( array &$definition ) {}
 
+
+
+    /**
+     * @param array $definition
+     */
     protected function preprocessDefinition( array &$definition ) {}
 
+
+
+    /**
+     * @param array $definition
+     */
     protected function processDefinition( array $definition ) {
         global $wgAutoloadClasses, $wgAvailableRights, $wgGroupPermissions, $wgMessagesDirs;
 
@@ -201,6 +288,11 @@ abstract class AbstractJsonSchemaClass {
         $this->definition = $definition;
     }
 
+
+
+    /**
+     *
+     */
     protected function setHooks() {
         global $wgHooks;
 
