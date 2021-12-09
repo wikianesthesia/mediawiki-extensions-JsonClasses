@@ -153,7 +153,7 @@ abstract class AbstractJsonSchemaClass {
     protected function preprocessDefinition( array &$definition ) {}
 
     protected function processDefinition( array $definition ) {
-        global $wgAutoloadClasses, $wgMessagesDirs;
+        global $wgAutoloadClasses, $wgAvailableRights, $wgGroupPermissions, $wgMessagesDirs;
 
         $this->preprocessDefinition( $definition );
 
@@ -166,10 +166,26 @@ abstract class AbstractJsonSchemaClass {
             }
         }
 
-        // Autoload classes
+        // AutoloadClasses
         if( isset( $definition[ 'AutoloadClasses' ] ) ) {
             foreach( $definition[ 'AutoloadClasses' ] as $className => $classFile ) {
                 $wgAutoloadClasses[ $className ] = $this->getLocalDirectory() . '/' . $classFile;
+            }
+        }
+
+        // AvailableRights
+        if( isset( $definition[ 'AvailableRights' ] ) ) {
+            foreach( $definition[ 'AvailableRights' ] as $availableRight ) {
+                $wgAvailableRights[] = $availableRight;
+            }
+        }
+
+        // GroupPermissions
+        if( isset( $definition[ 'GroupPermissions' ] ) ) {
+            foreach( $definition[ 'GroupPermissions' ] as $userGroup => $rights ) {
+                foreach( $rights as $right => $value ) {
+                    $wgGroupPermissions[ $userGroup ][ $right ] = $value;
+                }
             }
         }
 
