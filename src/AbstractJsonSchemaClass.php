@@ -240,7 +240,7 @@ abstract class AbstractJsonSchemaClass {
      * @param array $definition
      */
     protected function processDefinition( array $definition ) {
-        global $wgAutoloadClasses, $wgAvailableRights, $wgGroupPermissions, $wgMessagesDirs;
+        global $wgAutoloadClasses, $wgAvailableRights, $wgGroupPermissions, $wgMessagesDirs, $wgResourceModules;
 
         $this->preprocessDefinition( $definition );
 
@@ -282,6 +282,26 @@ abstract class AbstractJsonSchemaClass {
                 $wgMessagesDirs[ 'JsonSchemaClasses' ][] = $this->getLocalDirectory() . '/' . $messagesDir;
             }
         }
+
+        if( isset( $definition[ 'ResourceModules' ] ) ) {
+            foreach( $definition[ 'ResourceModules'] as $name => $info ) {
+                if( !isset( $info[ 'localBasePath' ] ) && isset( $definition[ 'ResourceFileModulePaths' ][ 'localBasePath' ] ) ) {
+                    $info[ 'localBasePath' ] = $this->getLocalDirectory() . '/' . $definition[ 'ResourceFileModulePaths' ][ 'localBasePath' ];
+                }
+
+                if( !isset( $info[ 'remoteExtPath' ] ) && isset( $definition[ 'ResourceFileModulePaths' ][ 'remoteExtPath' ] ) ) {
+                    $info[ 'remoteExtPath' ] = $definition[ 'ResourceFileModulePaths' ][ 'remoteExtPath' ];
+                }
+
+                if( !isset( $info[ 'remoteSkinPath' ] ) && isset( $definition[ 'ResourceFileModulePaths' ][ 'remoteSkinPath' ] ) ) {
+                    $info[ 'remoteSkinPath' ] = $definition[ 'ResourceFileModulePaths' ][ 'remoteSkinPath' ];
+                }
+
+                $wgResourceModules[ $name ] = $info;
+            }
+        }
+
+
 
         $this->postprocessDefinition( $definition );
 
