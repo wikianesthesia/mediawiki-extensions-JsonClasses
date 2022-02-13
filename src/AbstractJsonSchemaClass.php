@@ -244,11 +244,17 @@ abstract class AbstractJsonSchemaClass {
 
         $this->preprocessDefinition( $definition );
 
-        JsonHelper::processDefinitionProperties( $this->getSchema()->getSchemaDefinition(), $definition );
+        $schema = $this->getSchema();
+
+        JsonHelper::processDefinitionProperties( $schema->getSchemaDefinition(), $definition );
 
         // Configuration directives
         if( isset( $definition[ 'config' ] ) ) {
+            $globalConfig = $schema->getClassConfig( $definition[ 'id' ] );
+
             foreach( $definition[ 'config' ] as $var => $value ) {
+                $value = $globalConfig[ $var ] ?? $value;
+
                 $this->setConfig( $var, $value );
             }
         }
@@ -300,8 +306,6 @@ abstract class AbstractJsonSchemaClass {
                 $wgResourceModules[ $name ] = $info;
             }
         }
-
-
 
         $this->postprocessDefinition( $definition );
 

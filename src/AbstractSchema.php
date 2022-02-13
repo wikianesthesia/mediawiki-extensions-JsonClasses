@@ -5,21 +5,23 @@ namespace MediaWiki\Extension\JsonSchemaClasses;
 use MediaWiki\MediaWikiServices;
 
 abstract class AbstractSchema {
-    protected $classDefinitions = [];
-    protected $classRegistry;
-
     protected $schema;
 
+    abstract public function getExtensionName(): string;
+    abstract public function getSchemaName(): string;
+    abstract public function registerClasses( &$classRegistry );
+
     public function __construct() {
-        $this->loadSchema();
+        $this->loadSchemaDefinition();
+        $this->initializeClassConfig();
     }
 
     public function getBaseClass(): string {
         return AbstractJsonSchemaClass::class;
     }
 
-    public function getClassRegistry() {
-        return $this->classRegistry;
+    public function getClassConfig( string $classId ) {
+        return $GLOBALS[ $this->getClassConfigVariable() ][ $classId ] ?? [];
     }
 
     public function getSchemaDefinition() {
@@ -45,9 +47,17 @@ abstract class AbstractSchema {
         return MediaWikiServices::getInstance()->get( 'JsonSchemaClassManager' );
     }
 
-    protected function loadSchema() {
-        $this->schema = JsonHelper::decodeJsonFile( $this->getSchemaFile() );
+    protected function getClassConfigVariable(): string {
+        return 'wg' . $this->getExtensionName() . $this->getSchemaName() . 'Config';
     }
 
-    abstract public function registerClasses( &$classRegistry );
+    protected function initializeClassConfig() {
+        if( !isset( $GLOBALS[ $this->getClassConfigVariable() ] ) ) {
+            $GLOBALS[ $this->getClassConfigVariable() ] = [];
+        }
+    }
+
+    protected function loadSchemaDefinition() {
+        $this->schema = JsonHelper::decodeJsonFile( $this->getSchemaFile() );
+    }
 }
