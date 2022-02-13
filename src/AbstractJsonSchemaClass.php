@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\JsonSchemaClasses;
 
+use AutoLoader;
 use MediaWiki\MediaWikiServices;
 use ReflectionClass;
 
@@ -263,6 +264,15 @@ abstract class AbstractJsonSchemaClass {
         if( isset( $definition[ 'AutoloadClasses' ] ) ) {
             foreach( $definition[ 'AutoloadClasses' ] as $className => $classFile ) {
                 $wgAutoloadClasses[ $className ] = $this->getLocalDirectory() . '/' . $classFile;
+            }
+        }
+
+        // AutoloadNamespaces
+        if( isset( $definition[ 'AutoloadNamespaces' ] ) ) {
+            foreach( $definition[ 'AutoloadNamespaces' ] as $autoloadNamespace => $directory ) {
+                $directory = $this->getLocalDirectory() . '/' . $directory;
+
+                AutoLoader::$psr4Namespaces[ $autoloadNamespace ] = $directory;
             }
         }
 
