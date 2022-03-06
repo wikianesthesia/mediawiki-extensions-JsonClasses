@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "description": "AbstractJsonSchemaClass schema. This describes the base schema for subclasses of AbstractJsonSchemaClass. All supporting files (internationalization messages, images, etc.) should be contained within the class's subdirectory. For consistency, many fields use the same names as the extension.json schema. However, only a limited subset of these fields are currently supported.",
+  "description": "AbstractJsonClass schema. This describes the base schema for subclasses of AbstractJsonClass. All supporting files (internationalization messages, images, etc.) should be contained within the class's subdirectory. For consistency, many fields use the same names as the extension.json schema. However, only a limited subset of these fields are currently supported.",
   "type": "object",
   "additionalProperties": false,
   "properties": {

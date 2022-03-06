@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extension\JsonSchemaClasses;
+namespace MediaWiki\Extension\JsonClasses;
 
 class JsonHelper {
     public static function decodeJsonFile( string $jsonFile ) {
@@ -23,7 +23,7 @@ class JsonHelper {
         return $decodedJson;
     }
 
-    public static function processDefinitionProperties( array $schema, array &$definition ) {
+    public static function processDefinitionProperties( array $schema, array &$definition ): bool {
         // Validate and import definition data into static class property
         foreach( $schema[ 'properties' ] as $propertyName => $propertyDefinition ) {
             // Make sure required property defined
@@ -102,5 +102,7 @@ class JsonHelper {
                 }
             }
         }
+
+        return true;
     }
 }

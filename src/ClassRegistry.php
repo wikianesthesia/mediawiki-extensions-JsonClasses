@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extension\JsonSchemaClasses;
+namespace MediaWiki\Extension\JsonClasses;
 
 class ClassRegistry {
     protected $classDefinitionFileName;

@@ -1,12 +1,12 @@
 <?php
 
-namespace MediaWiki\Extension\JsonSchemaClasses;
+namespace MediaWiki\Extension\JsonClasses;
 
 use AutoLoader;
 use MediaWiki\MediaWikiServices;
 use ReflectionClass;
 
-abstract class AbstractJsonSchemaClass {
+abstract class AbstractJsonClass {
     protected $localDirectory = '';
     protected $remoteDirectory = '';
 
@@ -199,10 +199,10 @@ abstract class AbstractJsonSchemaClass {
 
 
     /**
-     * @return JsonSchemaClassManager
+     * @return JsonClassManager
      */
-    protected function getJsonSchemaClassManager(): JsonSchemaClassManager {
-        return MediaWikiServices::getInstance()->get( 'JsonSchemaClassManager' );
+    protected function getJsonClassManager(): JsonClassManager {
+        return MediaWikiServices::getInstance()->get( 'JsonClassManager' );
     }
 
 
@@ -218,7 +218,7 @@ abstract class AbstractJsonSchemaClass {
      * @return AbstractSchema|null
      */
     protected function getSchema(): ?AbstractSchema {
-        return $this->getJsonSchemaClassManager()->getSchema( $this->getSchemaClass() );
+        return $this->getJsonClassManager()->getSchema( $this->getSchemaClass() );
     }
 
 
@@ -295,7 +295,7 @@ abstract class AbstractJsonSchemaClass {
         // Message directories
         if( isset( $definition[ 'MessagesDirs' ] ) ) {
             foreach( $definition[ 'MessagesDirs' ] as $messagesDir ) {
-                $wgMessagesDirs[ 'JsonSchemaClasses' ][] = $this->getLocalDirectory() . '/' . $messagesDir;
+                $wgMessagesDirs[ 'JsonClasses' ][] = $this->getLocalDirectory() . '/' . $messagesDir;
             }
         }
 

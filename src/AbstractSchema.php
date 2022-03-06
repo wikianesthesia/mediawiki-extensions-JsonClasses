@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extension\JsonSchemaClasses;
+namespace MediaWiki\Extension\JsonClasses;
 
 use MediaWiki\MediaWikiServices;
 
@@ -17,7 +17,7 @@ abstract class AbstractSchema {
     }
 
     public function getBaseClass(): string {
-        return AbstractJsonSchemaClass::class;
+        return AbstractJsonClass::class;
     }
 
     public function getClassConfig( string $classId ) {
@@ -29,7 +29,7 @@ abstract class AbstractSchema {
     }
 
     public function getClassDefinitionFileName(): string {
-        return 'definition.json';
+        return 'class.json';
     }
 
     public function getClassRegistryClass(): string {
@@ -37,14 +37,14 @@ abstract class AbstractSchema {
     }
 
     public function getSchemaFile(): string {
-        return realpath( __DIR__ . '../resources/schema/definition.schema.json' );
+        return realpath( __DIR__ . '../resources/schema/class.schema.json' );
     }
 
     /**
-     * @return JsonSchemaClassManager
+     * @return JsonClassManager
      */
-    protected function getJsonSchemaClassManager(): JsonSchemaClassManager {
-        return MediaWikiServices::getInstance()->get( 'JsonSchemaClassManager' );
+    protected function getJsonClassManager(): JsonClassManager {
+        return MediaWikiServices::getInstance()->get( 'JsonClassManager' );
     }
 
     protected function getClassConfigVariable(): string {

@@ -1,11 +1,11 @@
 <?php
 
-namespace MediaWiki\Extension\JsonSchemaClasses;
+namespace MediaWiki\Extension\JsonClasses;
 
 use MediaWiki\MediaWikiServices;
 
 return [
-    'JsonSchemaClassManager' => static function( MediaWikiServices $services ): JsonSchemaClassManager {
-        return new JsonSchemaClassManager();
+    'JsonClassManager' => static function( MediaWikiServices $services ): JsonClassManager {
+        return new JsonClassManager();
     },
 ];

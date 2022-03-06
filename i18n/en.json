@@ -4,7 +4,7 @@
       "Chris Rishel"
     ]
   },
-  "jsonschemaclasses": "Json Schema Classes",
-  "jsonschemaclasses-extensionname": "JsonSchemaClasses",
-  "jsonschemaclasses-desc": "Provides support for modular classes which load data from a JSON schema"
+  "jsonclasses": "Json Classes",
+  "jsonclasses-extensionname": "JsonClasses",
+  "jsonclasses-desc": "Provides support for modular classes which load data from a JSON schema"
 }

@@ -1,23 +1,23 @@
 {
-  "name": "JsonSchemaClasses",
-  "namemsg": "jsonschemaclasses-extensionname",
+  "name": "JsonClasses",
+  "namemsg": "jsonclasses-extensionname",
   "version": "0.1.0",
   "author": [
     "Chris Rishel"
   ],
   "license-name": "GPL-3.0-or-later",
-  "url": "https://www.mediawiki.org/wiki/Extension:JsonSchemaClasses",
-  "descriptionmsg": "jsonschemaclasses-desc",
+  "url": "https://www.mediawiki.org/wiki/Extension:JsonClasses",
+  "descriptionmsg": "jsonclasses-desc",
   "type": "other",
   "requires": {
     "MediaWiki": ">= 1.35.0",
     "extensions": {}
   },
   "AutoloadNamespaces": {
-    "MediaWiki\\Extension\\JsonSchemaClasses\\": "src/"
+    "MediaWiki\\Extension\\JsonClasses\\": "src/"
   },
   "MessagesDirs": {
-    "JsonSchemaClasses": [
+    "JsonClasses": [
       "i18n"
     ]
   },

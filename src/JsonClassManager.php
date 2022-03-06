@@ -1,13 +1,13 @@
 <?php
 
-namespace MediaWiki\Extension\JsonSchemaClasses;
+namespace MediaWiki\Extension\JsonClasses;
 
 use MediaWiki\MediaWikiServices;
 
-class JsonSchemaClassManager {
+class JsonClassManager {
 
     /**
-     * @var AbstractJsonSchemaClass[]
+     * @var AbstractJsonClass[]
      */
     protected static $classInstances = [];
 
@@ -22,11 +22,11 @@ class JsonSchemaClassManager {
      */
     protected static $schemaClassIds = [];
 
-    public function getClassInstance( string $class ): ?AbstractJsonSchemaClass {
+    public function getClassInstance( string $class ): ?AbstractJsonClass {
         return static::$classInstances[ $class ] ?? null;
     }
 
-    public function getClassInstanceForSchema( string $schemaClass, string $classId ): ?AbstractJsonSchemaClass {
+    public function getClassInstanceForSchema( string $schemaClass, string $classId ): ?AbstractJsonClass {
         if( !isset( static::$schemaClassIds[ $schemaClass ] )
             || !isset( static::$schemaClassIds[ $schemaClass ][ $classId ] ) ) {
             return null;
@@ -79,6 +79,7 @@ class JsonSchemaClassManager {
 
         if( !class_exists( $classRegistryClass ) ) {
             // TODO error handling
+            return false;
         }
 
         static::$schema[ $schemaClass ] = $schema;
@@ -121,7 +122,7 @@ class JsonSchemaClassManager {
         require_once( $classFile );
 
         /**
-         * @var AbstractJsonSchemaClass
+         * @var AbstractJsonClass
          */
         $classInstance = new $classDefinition[ 'class' ]( $classDefinition );
 

@@ -1,1 +1,1 @@
-# mediawiki-extensions-JsonSchemaClasses
+# mediawiki-extensions-JsonClasses
