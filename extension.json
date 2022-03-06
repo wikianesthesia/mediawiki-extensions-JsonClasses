@@ -1,7 +1,7 @@
 {
   "name": "JsonClasses",
   "namemsg": "jsonclasses-extensionname",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": [
     "Chris Rishel"
   ],
@@ -15,6 +15,9 @@
   },
   "AutoloadNamespaces": {
     "MediaWiki\\Extension\\JsonClasses\\": "src/"
+  },
+  "Hooks": {
+    "MediaWikiServices": "MediaWiki\\Extension\\JsonClasses\\Hook\\MediaWikiServices::callback"
   },
   "MessagesDirs": {
     "JsonClasses": [

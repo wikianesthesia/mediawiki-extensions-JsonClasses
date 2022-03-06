@@ -70,33 +70,18 @@ class JsonClassManager {
             return false;
         }
 
-        $schema = new $schemaClass();
-
-        /**
-         * @var ClassRegistry
-         */
-        $classRegistryClass = $schema->getClassRegistryClass();
-
-        if( !class_exists( $classRegistryClass ) ) {
+        if( !class_exists( $schemaClass ) ) {
             // TODO error handling
             return false;
         }
 
-        static::$schema[ $schemaClass ] = $schema;
+        static::$schema[ $schemaClass ] = new $schemaClass();
         static::$schemaClassIds[ $schemaClass ] = [];
-
-        $classRegistry = new $classRegistryClass( $schema->getClassDefinitionFileName() );
-
-        static::$schema[ $schemaClass ]->registerClasses( $classRegistry );
-
-        foreach( $classRegistry->getRegisteredClassDefinitionFiles() as $classDefinitionFile ) {
-            $this->loadClass( $schemaClass, $classDefinitionFile );
-        }
 
         return true;
     }
 
-    protected function loadClass( string $schemaClass, string $classDefinitionFile ): bool {
+    public function loadClass( string $schemaClass, string $classDefinitionFile ): bool {
         $classDefinition = JsonHelper::decodeJsonFile( $classDefinitionFile );
 
         if( !isset( $classDefinition[ 'class' ] ) ) {
@@ -130,6 +115,28 @@ class JsonClassManager {
 
         static::$schemaClassIds[ $schemaClass ][ $classInstance->getId() ] = $classDefinition[ 'class' ];
 
+        return true;
+    }
+
+    public function loadClassDirectory( string $schemaClass, string $classDirectory, bool $includeSubdirectories = false, bool $recursive = false ): bool {
+        if( !isset( static::$schema[ $schemaClass ] ) ) {
+            return false;
+        }
+
+        $classDefinitionFileName = static::$schema[ $schemaClass ]->getClassDefinitionFileName();
+        $classDefinitionFile = $classDirectory . '/' . $classDefinitionFileName;
+
+        if( file_exists( $classDefinitionFile ) ) {
+            $this->loadClass( $schemaClass, $classDefinitionFile );
+        }
+
+        if( $includeSubdirectories ) {
+            foreach( scandir( $classDirectory ) as $file ) {
+                if( $file !== '.' && $file !== '..' && is_dir( $classDirectory . '/' . $file ) ) {
+                    $this->loadClassDirectory( $schemaClass,$classDirectory . '/' . $file, $recursive, $recursive );
+                }
+            }
+        }
 
         return true;
     }

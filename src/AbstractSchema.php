@@ -9,7 +9,6 @@ abstract class AbstractSchema {
 
     abstract public function getExtensionName(): string;
     abstract public function getSchemaName(): string;
-    abstract public function registerClasses( &$classRegistry );
 
     public function __construct() {
         $this->loadSchemaDefinition();
@@ -30,10 +29,6 @@ abstract class AbstractSchema {
 
     public function getClassDefinitionFileName(): string {
         return 'class.json';
-    }
-
-    public function getClassRegistryClass(): string {
-        return ClassRegistry::class;
     }
 
     public function getSchemaFile(): string {
