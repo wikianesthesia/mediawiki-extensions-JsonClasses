@@ -130,7 +130,7 @@ class JsonClassManager {
             $this->loadClass( $schemaClass, $classDefinitionFile );
         }
 
-        if( $includeSubdirectories ) {
+        if( $includeSubdirectories && $classDirectory ) {
             foreach( scandir( $classDirectory ) as $file ) {
                 if( $file !== '.' && $file !== '..' && is_dir( $classDirectory . '/' . $file ) ) {
                     $this->loadClassDirectory( $schemaClass,$classDirectory . '/' . $file, $recursive, $recursive );
