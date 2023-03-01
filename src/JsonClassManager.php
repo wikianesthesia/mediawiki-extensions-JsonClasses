@@ -23,10 +23,13 @@ class JsonClassManager {
     protected static $schemaClassIds = [];
 
     public function getClassInstance( string $class ): ?AbstractJsonClass {
-        return static::$classInstances[ $class ] ?? null;
+        return static::$classInstances[ strtolower( $class ) ] ?? null;
     }
 
     public function getClassInstanceForSchema( string $schemaClass, string $classId ): ?AbstractJsonClass {
+        $schemaClass = strtolower( $schemaClass );
+        $classId = strtolower( $classId );
+
         if( !isset( static::$schemaClassIds[ $schemaClass ] )
             || !isset( static::$schemaClassIds[ $schemaClass ][ $classId ] ) ) {
             return null;
@@ -37,6 +40,8 @@ class JsonClassManager {
 
 
     public function getClassInstancesForSchema( string $schemaClass ): array {
+        $schemaClass = strtolower( $schemaClass );
+
         $classInstances = [];
 
         if( isset( static::$schemaClassIds[ $schemaClass ] ) ) {
@@ -49,15 +54,15 @@ class JsonClassManager {
     }
 
     public function getSchema( string $schemaClass ): ?AbstractSchema {
-        return static::$schema[ $schemaClass ] ?? null;
+        return static::$schema[ strtolower( $schemaClass ) ] ?? null;
     }
 
     public function isClassRegistered( string $class ): bool {
-        return isset( static::$classInstances[ $class ] );
+        return isset( static::$classInstances[ strtolower( $class ) ] );
     }
 
     public function isSchemaRegistered( string $baseClass ): bool {
-        return isset( static::$schema[ $baseClass ] );
+        return isset( static::$schema[ strtolower( $baseClass ) ] );
     }
 
     /**
@@ -65,7 +70,9 @@ class JsonClassManager {
      * @return bool
      */
     public function registerSchema( string $schemaClass ): bool {
-        if( isset( static::$schema[ $schemaClass ] ) ) {
+        $schemaClassKey = strtolower( $schemaClass );
+
+        if( isset( static::$schema[ $schemaClassKey ] ) ) {
             // TODO throw/log error?
             return false;
         }
@@ -75,8 +82,8 @@ class JsonClassManager {
             return false;
         }
 
-        static::$schema[ $schemaClass ] = new $schemaClass();
-        static::$schemaClassIds[ $schemaClass ] = [];
+        static::$schema[ $schemaClassKey ] = new $schemaClass();
+        static::$schemaClassIds[ $schemaClassKey ] = [];
 
         return true;
     }
@@ -111,19 +118,21 @@ class JsonClassManager {
          */
         $classInstance = new $classDefinition[ 'class' ]( $classDefinition );
 
-        static::$classInstances[ $classDefinition[ 'class' ] ] = $classInstance;
+        static::$classInstances[ strtolower( $classDefinition[ 'class' ] ) ] = $classInstance;
 
-        static::$schemaClassIds[ $schemaClass ][ $classInstance->getId() ] = $classDefinition[ 'class' ];
+        static::$schemaClassIds[ strtolower( $schemaClass ) ][ strtolower( $classInstance->getId() ) ] = $classDefinition[ 'class' ];
 
         return true;
     }
 
     public function loadClassDirectory( string $schemaClass, string $classDirectory, bool $includeSubdirectories = false, bool $recursive = false ): bool {
-        if( !isset( static::$schema[ $schemaClass ] ) ) {
+        $schemaClassKey = strtolower( $schemaClass );
+
+        if( !isset( static::$schema[ $schemaClassKey ] ) ) {
             return false;
         }
 
-        $classDefinitionFileName = static::$schema[ $schemaClass ]->getClassDefinitionFileName();
+        $classDefinitionFileName = static::$schema[ $schemaClassKey ]->getClassDefinitionFileName();
         $classDefinitionFile = $classDirectory . '/' . $classDefinitionFileName;
 
         if( file_exists( $classDefinitionFile ) ) {
