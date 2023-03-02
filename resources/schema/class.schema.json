@@ -38,7 +38,7 @@
     },
     "namemsg": {
       "type": "string",
-      "description": "i18n message key of the class display name. If not specified, will attempt to use the message key \"userachievements-ACHIEVEMENTID-name\". If a valid message is defined, this will take precedence over the value of \"name\"."
+      "description": "i18n message key of the class display name. If not specified, will attempt to use the message key \"JSONCLASSNAME-CLASSID-name\". If a valid message is defined, this will take precedence over the value of \"name\"."
     },
     "description": {
       "type": "string",
@@ -46,7 +46,7 @@
     },
     "descriptionmsg": {
       "type": "string",
-      "description": "i18n message key of the class's description. If not specified, will attempt to use the message key \"userachievements-ACHIEVEMENTID-desc\". If a valid message is defined, this will take precedence over the value of \"description\"."
+      "description": "i18n message key of the class's description. If not specified, will attempt to use the message key \"JSONCLASSNAME-CLASSID-desc\". If a valid message is defined, this will take precedence over the value of \"description\"."
     },
     "config": {
       "type": "object",
@@ -92,7 +92,7 @@
     },
     "MessagesDirs": {
       "type": "array",
-      "description": "Directory paths containing JSON internationalization data. Unlike the extension.json definition of this field, this should be a simple array of paths relative to the achievement's root.",
+      "description": "Directory paths containing JSON internationalization data. Unlike the extension.json definition of this field, this should be a simple array of paths relative to the class's root directory.",
       "items": {
         "type": "string"
       }
